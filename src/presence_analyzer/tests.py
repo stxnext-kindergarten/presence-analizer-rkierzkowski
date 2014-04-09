@@ -53,6 +53,30 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(len(data), 2)
         self.assertDictEqual(data[0], {u'user_id': 10, u'name': u'User 10'})
 
+    def test_mean_time_weeday(self):
+        """
+        Test mean time per day.
+        """
+        resp = self.client.get('/api/v1/mean_time_weekday/11')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 7)
+        all_days = [u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat', u'Sun']
+        self.assertEqual(all_days, [ record[0] for record in data ])
+
+    def test_presence_weekday(self):
+        """
+        Test summary - seconds worked per day.
+        """
+        resp = self.client.get('/api/v1/presence_weekday/11')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 8)
+        all_days = [u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat', u'Sun']
+        self.assertEqual(all_days, [ record[0] for record in data[1:] ])
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -84,6 +108,10 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertEqual(data[10][sample_date]['start'],
                          datetime.time(9, 39, 5))
 
+    def test_mean(self):
+        data = [1, 2, 3]
+        mean = utils.mean(data)
+        self.assertAlmostEqual(mean, 2.0)
 
 def suite():
     """
