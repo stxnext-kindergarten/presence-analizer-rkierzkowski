@@ -63,7 +63,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         data = json.loads(resp.data)
         self.assertEqual(len(data), 7)
         all_days = [u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat', u'Sun']
-        self.assertEqual(all_days, [ record[0] for record in data ])
+        self.assertEqual(all_days, [record[0] for record in data])
 
     def test_presence_weekday(self):
         """
@@ -75,7 +75,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         data = json.loads(resp.data)
         self.assertEqual(len(data), 8)
         all_days = [u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat', u'Sun']
-        self.assertEqual(all_days, [ record[0] for record in data[1:] ])
+        self.assertEqual(all_days, [record[0] for record in data[1:]])
 
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
@@ -112,6 +112,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         data = [1, 2, 3]
         mean = utils.mean(data)
         self.assertAlmostEqual(mean, 2.0)
+
 
 def suite():
     """
