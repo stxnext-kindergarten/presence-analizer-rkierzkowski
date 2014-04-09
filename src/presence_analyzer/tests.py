@@ -77,6 +77,22 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         all_days = [u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat', u'Sun']
         self.assertEqual(all_days, [record[0] for record in data[1:]])
 
+    def test_mean_start_end_time(self):
+        """
+        Test average start and end of a day.
+        """
+        resp = self.client.get('/api/v1/mean_start_end_time/11')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 7)
+        all_days = [u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat', u'Sun']
+        self.assertEqual(all_days, [record[0] for record in data])
+        starts = [record[1] for record in data]
+        ends = [record[2] for record in data]
+        for start, end in zip(starts, ends):
+            self.assertLessEqual(start, end)
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
