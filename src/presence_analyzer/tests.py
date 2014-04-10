@@ -113,6 +113,15 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         mean = utils.mean(data)
         self.assertAlmostEqual(mean, 2.0)
 
+    def test_seconds_since_midnight(self):
+        time = datetime.time(8, 0, 0)
+        self.assertEqual(utils.seconds_since_midnight(time), 3600 * 8)
+
+    def test_interval(self):
+        start = datetime.time(0, 0, 0)
+        end = datetime.time(8, 0, 0)
+        self.assertEqual(utils.interval(start, end), 3600 * 8)
+
 
 def suite():
     """
