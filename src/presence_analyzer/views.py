@@ -26,6 +26,7 @@ def mainpage():
     """
     return redirect('/presence_weekday')
 
+
 @app.route('/presence_weekday')
 def presence_weekday_page():
     """
@@ -33,12 +34,14 @@ def presence_weekday_page():
     """
     return render_template('presence_weekday.jinja2')
 
+
 @app.route('/mean_time_weekday')
 def mean_time_weekday_page():
     """
     Renders mean time weekday page.
     """
     return render_template('mean_time_weekday.jinja2')
+
 
 @app.route('/mean_start_end_time')
 def mean_start_end_page():
