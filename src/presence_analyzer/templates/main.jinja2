@@ -14,39 +14,8 @@
     <script src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
-
         {% block draw_chart %}
-        google.load("visualization", "1", {packages:["corechart"], 'language': 'en'});
 
-        (function($) {
-            $(document).ready(function(){
-                var loading = $('#loading');
-                $.getJSON("/api/v1/users", function(result) {
-                    var dropdown = $("#user_id");
-                    $.each(result, function(item) {
-                        dropdown.append($("<option />").val(this.user_id).text(this.name));
-                    });
-                    dropdown.show();
-                    loading.hide();
-                });
-                $('#user_id').change(function(){
-                    var selected_user = $("#user_id").val();
-                    var chart_div = $('#chart_div');
-                    if(selected_user) {
-                        loading.show();
-                        chart_div.hide();
-                        $.getJSON("/api/v1/presence_weekday/"+selected_user, function(result) {
-                            var data = google.visualization.arrayToDataTable(result);
-                            var options = {};
-                            chart_div.show();
-                            loading.hide();
-                            var chart = new google.visualization.PieChart(chart_div[0]);
-                            chart.draw(data, options);
-                        });
-                    }
-                });
-            });
-        })(jQuery);
         {% endblock %}
     </script>
 </head>
@@ -55,26 +24,22 @@
     <div id="main">
         <div id="header">
             <h1>Presence analyzer</h1>
-
-            <ul>
-                <li id="selected"><a href="/static/presence_weekday.html">Presence by weekday</a></li>
-                <li><a href="/static/mean_time_weekday.html">Presence mean time</a></li>
-                <li><a href="/static/presence_start_end.html">Presence start-end</a></li>
+            {% set navigation_bar = [
+                (url_for('presence_weekday_page'), 'presence_weekday', 'Presence by weekday'),
+                (url_for('mean_time_weekday_page'), 'mean_time_weekday', 'Presence mean time'),
+                (url_for('mean_start_end_page'), 'mean_start_end_page', 'Presence start-end')
+            ] -%}
+            {% set active_page = active_page|default('presence_weekday') -%}
+            <ul id="navigation">
+            {% for href, id, caption in navigation_bar %}
+              <li{% if id == active_page %} id="selected"{% endif
+              %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+            {% endfor %}
             </ul>
         </div>
         <div id="content">
             {% block content %}
-            <h2>Presence by weekday</h2>
-            <p>
-                <select id="user_id" style="display: none">
-                    <option value="">--</option>
-                </select>
-                <div id="chart_div" style="display: none">
-                </div>
-                <div id="loading">
-                    <img src="/static/img/loading.gif" />
-                </div>
-            </p>
+
             {% endblock %}
         </div>
 

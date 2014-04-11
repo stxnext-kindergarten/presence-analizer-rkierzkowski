@@ -29,10 +29,23 @@ def mainpage():
 @app.route('/presence_weekday')
 def presence_weekday_page():
     """
-    Redirects to front page.
+    Renders to presence weekday page.
     """
     return render_template('presence_weekday.jinja2')
 
+@app.route('/mean_time_weekday')
+def mean_time_weekday_page():
+    """
+    Renders mean time weekday page.
+    """
+    return render_template('mean_time_weekday.jinja2')
+
+@app.route('/mean_start_end_time')
+def mean_start_end_page():
+    """
+    Renders mean start and end page.
+    """
+    return render_template('presence_start_end.jinja2')
 
 
 @app.route('/api/v1/users', methods=['GET'])
