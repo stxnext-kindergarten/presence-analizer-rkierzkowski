@@ -14,6 +14,10 @@ TEST_DATA_CSV = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_data.csv'
 )
 
+TEST_USERS_XML = os.path.join(
+    os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_users.xml'
+)
+
 
 # pylint: disable=E1103
 class PresenceAnalyzerViewsTestCase(unittest.TestCase):
@@ -26,6 +30,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         Before each test, set up a environment.
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
+        main.app.config.update({'USERS_XML': TEST_USERS_XML})
         self.client = main.app.test_client()
 
     def tearDown(self):
@@ -40,7 +45,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         """
         resp = self.client.get('/')
         self.assertEqual(resp.status_code, 302)
-        assert resp.headers['Location'].endswith('/presence_weekday.html')
+        assert resp.headers['Location'].endswith('/presence_weekday')
 
     def test_api_users(self):
         """
@@ -50,8 +55,13 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
         data = json.loads(resp.data)
-        self.assertEqual(len(data), 2)
-        self.assertDictEqual(data[0], {u'user_id': 10, u'name': u'User 10'})
+        self.assertEqual(len(data), 3)
+        user = {
+            u'user_id': 2,
+            u'name': u'User 2',
+            u'avatar': u'http://example.com:80/api/2'
+        }
+        self.assertDictEqual(data[0], user)
 
     def test_mean_time_weeday(self):
         """

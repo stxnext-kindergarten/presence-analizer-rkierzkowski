@@ -10,6 +10,7 @@ from presence_analyzer.main import app
 from presence_analyzer.utils import (
     jsonify,
     get_data,
+    get_users,
     mean,
     group_by_weekday,
     mean_start_and_end,
@@ -50,15 +51,15 @@ def mean_start_end_page():
     """
     return render_template('presence_start_end.jinja2')
 
+
 @app.route('/api/v1/users', methods=['GET'])
 @jsonify
 def users_view():
     """
     Users listing for dropdown.
     """
-    data = get_data()
-    return [{'user_id': i, 'name': 'User {0}'.format(str(i))}
-            for i in data.keys()]
+    return get_users()
+
 
 @app.route('/api/v1/mean_time_weekday/', methods=['GET'])
 @app.route('/api/v1/mean_time_weekday/<int:user_id>', methods=['GET'])
@@ -78,6 +79,7 @@ def mean_time_weekday_view(user_id=0):
 
     return result
 
+
 @app.route('/api/v1/presence_weekday/', methods=['GET'])
 @app.route('/api/v1/presence_weekday/<int:user_id>', methods=['GET'])
 @jsonify
@@ -96,6 +98,7 @@ def presence_weekday_view(user_id=0):
 
     result.insert(0, ('Weekday', 'Presence (s)'))
     return result
+
 
 @app.route('/api/v1/mean_start_end_time/', methods=['GET'])
 @app.route('/api/v1/mean_start_end_time/<int:user_id>', methods=['GET'])
