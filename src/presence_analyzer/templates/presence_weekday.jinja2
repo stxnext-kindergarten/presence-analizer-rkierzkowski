@@ -7,7 +7,7 @@ google.load("visualization", "1", {packages:["corechart"], 'language': 'en'});
 (function($) {
     $(document).ready(function(){
         var loading = $('#loading');
-        $.getJSON("/api/v1/users", function(result) {
+        $.getJSON("{{ url_for('users_view') }}", function(result) {
             var dropdown = $("#user_id");
             $.each(result, function(item) {
                 dropdown.append($("<option />").val(this.user_id).text(this.name));
@@ -21,7 +21,7 @@ google.load("visualization", "1", {packages:["corechart"], 'language': 'en'});
             if(selected_user) {
                 loading.show();
                 chart_div.hide();
-                $.getJSON("/api/v1/presence_weekday/"+selected_user, function(result) {
+                $.getJSON("{{ url_for('presence_weekday_view') }}" + selected_user, function(result) {
                     var data = google.visualization.arrayToDataTable(result);
                     var options = {};
                     chart_div.show();
@@ -37,14 +37,4 @@ google.load("visualization", "1", {packages:["corechart"], 'language': 'en'});
 
 {% block content %}
 <h2>Presence by weekday</h2>
-<p>
-    <select id="user_id" style="display: none">
-        <option value="">--</option>
-    </select>
-    <div id="chart_div" style="display: none">
-    </div>
-    <div id="loading">
-        <img src="/static/img/loading.gif" />
-    </div>
-</p>
 {% endblock %}
