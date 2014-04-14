@@ -90,8 +90,12 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(all_days, [record[0] for record in data])
         starts = [record[1] for record in data]
         ends = [record[2] for record in data]
-        for start, end in zip(starts, ends):
-            self.assertLessEqual(start, end)
+        for i, (start, end) in enumerate(zip(starts, ends)):
+            self.assertLessEqual(
+                start,
+                end,
+                msg="start=%s is not <= end=%s in row=%s" % (start, end, i)
+            )
 
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
