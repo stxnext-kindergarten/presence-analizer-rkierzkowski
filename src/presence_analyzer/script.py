@@ -9,6 +9,8 @@ from functools import partial
 import paste.script.command
 import werkzeug.script
 
+from utils import download_file
+
 etc = partial(os.path.join, 'parts', 'etc')
 
 DEPLOY_INI = etc('deploy.ini')
@@ -76,6 +78,25 @@ def _serve(action, debug=False, dry_run=False):
     sys.argv = argv[:2] + [abspath(config)] + argv[3:]
     # Run the 'paster' command
     paste.script.command.run()
+
+
+# bin/refresh-users ...
+def refresh_users():
+
+    def action_debug():
+        """ Update user file on development machine.
+        """
+        app = make_app(config=DEBUG_CFG)
+        download_file(app.config['USERS_URL'], app.config['USERS_XML'])
+
+    # Updates deploy action:
+    def action_deploy():
+        """ Update user file in the deployment environment.
+        """
+        app = make_app(config=DEPLOY_CFG)
+        download_file(app.config['USERS_URL'], app.config['USERS_XML'])
+
+    werkzeug.script.run()
 
 
 # bin/flask-ctl ...

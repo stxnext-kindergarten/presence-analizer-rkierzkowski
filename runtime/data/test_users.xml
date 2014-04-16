@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<intranet>
+    <server>
+        <host>example.com</host>
+        <port>80</port>
+        <protocol>http</protocol>
+    </server>
+    <users>
+        <user id="2">
+            <avatar>/api/2</avatar>
+            <name>User 2</name>
+        </user>
+        <user id="3">
+            <avatar>/api/3</avatar>
+            <name>User 3</name>
+        </user>
+        <user id="4">
+            <avatar>/api/4</avatar>
+            <name>User 4</name>
+        </user>
+    </users>
+</intranet>

@@ -13,8 +13,12 @@ from flask import Response
 from presence_analyzer.main import app
 from collections import defaultdict
 
+import requests
+
 import logging
 log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
+
+from lxml import etree
 
 
 def jsonify(function):
@@ -26,6 +30,47 @@ def jsonify(function):
         return Response(dumps(function(*args, **kwargs)),
                         mimetype='application/json')
     return inner
+
+
+def download_file(url, destination):
+    r = requests.get(url, stream=True)
+    with open(destination, 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk:
+                f.write(chunk)
+                f.flush()
+
+
+def get_users():
+    """
+    Extracts user data from XML file.
+    """
+    result = []
+    with open(app.config['USERS_XML'], 'r') as xmlfile:
+        tree = etree.parse(xmlfile)
+        for node in tree.getroot():
+            if node.tag == 'users':
+                users = node
+            elif node.tag == 'server':
+                server = node
+
+        s = {}
+        for record in server:
+            s[record.tag] = record.text
+
+        address = s['protocol'] + "://" + s['host'] + ":" + s['port']
+
+        for record in users:
+            user = {}
+            user['user_id'] = record.get('id')
+            for field in record:
+                user[field.tag] = field.text
+            if 'avatar' in user:
+                user['avatar'] = address + user['avatar']
+            user['user_id'] = int(user['user_id'])
+            result.append(user)
+
+    return result
 
 
 def get_data():
