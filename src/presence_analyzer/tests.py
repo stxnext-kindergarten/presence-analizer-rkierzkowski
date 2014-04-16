@@ -53,6 +53,30 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(len(data), 2)
         self.assertDictEqual(data[0], {u'user_id': 10, u'name': u'User 10'})
 
+    def test_mean_time_weeday(self):
+        """
+        Test mean time per day.
+        """
+        resp = self.client.get('/api/v1/mean_time_weekday/11')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 7)
+        all_days = [u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat', u'Sun']
+        self.assertEqual(all_days, [record[0] for record in data])
+
+    def test_presence_weekday(self):
+        """
+        Test summary - seconds worked per day.
+        """
+        resp = self.client.get('/api/v1/presence_weekday/11')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 8)
+        all_days = [u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat', u'Sun']
+        self.assertEqual(all_days, [record[0] for record in data[1:]])
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -83,6 +107,37 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertItemsEqual(data[10][sample_date].keys(), ['start', 'end'])
         self.assertEqual(data[10][sample_date]['start'],
                          datetime.time(9, 39, 5))
+
+    def test_mean(self):
+        data = [1, 2, 3]
+        mean = utils.mean(data)
+        self.assertAlmostEqual(mean, 2.0)
+
+    def test_seconds_since_midnight(self):
+        time = datetime.time(8, 0, 0)
+        self.assertEqual(utils.seconds_since_midnight(time), 3600 * 8)
+
+        time = datetime.time(23, 59, 59)
+        self.assertEqual(utils.seconds_since_midnight(time), 3600 * 24 - 1)
+
+        time = datetime.time(0, 0, 0)
+        self.assertEqual(utils.seconds_since_midnight(time), 0)
+
+    def test_interval(self):
+        start = datetime.time(1, 0, 0)
+        end = datetime.time(8, 30, 15)
+
+        self.assertEqual(utils.interval(start, end), 3600 * 7 + 30 * 60 + 15)
+
+        start = datetime.time(0, 0, 0)
+        end = datetime.time(0, 0, 0)
+
+        self.assertEqual(utils.interval(start, end), 0)
+
+        start = datetime.time(0, 0, 0)
+        end = datetime.time(23, 59, 59)
+
+        self.assertEqual(utils.interval(start, end), 3600 * 24 - 1)
 
 
 def suite():
