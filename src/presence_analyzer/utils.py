@@ -11,6 +11,7 @@ from datetime import datetime
 from flask import Response
 
 from presence_analyzer.main import app
+from collections import defaultdict
 
 import logging
 log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
@@ -75,6 +76,18 @@ def group_by_weekday(items):
         start = items[date]['start']
         end = items[date]['end']
         result[date.weekday()].append(interval(start, end))
+    return result
+
+
+def mean_start_and_end(items):
+    """
+    Groups starts and ends by weekday.
+    """
+    result = {i: defaultdict(lambda: []) for i in range(7)}
+    for date in items:
+        day = result[date.weekday()]
+        day['start'].append(seconds_since_midnight(items[date]['start']))
+        day['end'].append(seconds_since_midnight(items[date]['end']))
     return result
 
 
