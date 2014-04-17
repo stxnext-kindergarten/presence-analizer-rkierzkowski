@@ -28,6 +28,7 @@ setup(
         'setuptools',
         'Flask',
         'lxml',
+	'requests',
     ],
     entry_points="""
     [console_scripts]
