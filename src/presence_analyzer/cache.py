@@ -11,8 +11,6 @@ def cache(period):
         lock = threading.RLock()
 
         def in_cache():
-            if 'result' in store:
-                print store['ts'], timestamp(), store['ts'] + period,
             return 'result' in store and timestamp() < store['ts'] + period
 
         def execute(*args, **kwargs):
