@@ -12,6 +12,7 @@ from flask import Response
 
 from presence_analyzer.main import app
 from collections import defaultdict
+from cache import cache
 
 import requests
 
@@ -72,7 +73,7 @@ def get_users():
 
     return result
 
-
+@cache(600)
 def get_data():
     """
     Extracts presence data from CSV file and groups it by user_id.
